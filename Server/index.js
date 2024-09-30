@@ -4,3 +4,5 @@ const app = express()
 app.listen(1000, () => {
     console.log("port: 1000")
 })
+
+console.log("hello")
