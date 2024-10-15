@@ -3,7 +3,8 @@ import Registration from './pages/userPages/RegistrationPage';
 import React from 'react';
 import LoginPage from './pages/userPages/LoginPage';
 import { Provider } from 'react-redux';
-import store from './redux/store/store';
+import { PersistGate } from 'redux-persist/integration/react';
+import store,{persistor} from './redux/store/store';
 import HomePage from './pages/userPages/HomePage';
 import EditPage from './pages/userPages/EditPage';
 import AdminLoginPage from './pages/adminPages/AdminLoginPage';
@@ -13,57 +14,63 @@ import RequireAuth from './redux/protect/RequireAuth';
 import RequireAdminLogin from './redux/protect/RequireAdminLogin';
 import RequireAdminAuth from './redux/protect/RequireAdminAuth';
 import AdminAddPage from './pages/userPages/AdminAddPage';
+import Dashboard from './components/user/Dashboard';
 
 const App = () => {
   return (
     <div>
       <Provider store={store}>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={
-            <RequireAuthLogin>
-              <Registration/>
-            </RequireAuthLogin>
-            
-            }/>
-          <Route path='/login' element={
-            <RequireAuthLogin>
-              <LoginPage/>
-            </RequireAuthLogin>
-            
-            }/>
-          <Route path='/home' element={
-            <RequireAuth>
-              <HomePage/>
-            </RequireAuth>
-            
-            }/>
-          <Route path='/edit-profile' element={
-            <RequireAuth>
-              <EditPage/>
-            </RequireAuth>
-            
-            }/>
-          <Route path='/admin/login' element={
-            <RequireAdminLogin>
-              <AdminLoginPage/>
-            </RequireAdminLogin>
-            }/>
-          <Route path='/admin/dashboard' element= {
-            <RequireAdminAuth>
-              <AdminDashboardPage/>
-            </RequireAdminAuth>
+        <PersistGate loading = {null} persistor={persistor}>
+        <BrowserRouter>
+            <Routes>
+              <Route path='/' element={
+                <RequireAuthLogin>
+                  <Registration/>
+                </RequireAuthLogin>
+                
+                }/>
+              <Route path='/login' element={
+                <RequireAuthLogin>
+                  <LoginPage/>
+                </RequireAuthLogin>
+                
+                }/>
+              <Route path='/home' element={
+                <RequireAuth>
+                  <HomePage/>
+                </RequireAuth>
+                
+                }/>
+              <Route path='/edit-profile' element={
+                <RequireAuth>
+                  <EditPage/>
+                </RequireAuth>
+                
+                }/>
+              <Route path='/admin/login' element={
+                <RequireAdminLogin>
+                  <AdminLoginPage/>
+                </RequireAdminLogin>
+                }/>
+              <Route path='/admin/dashboard' element= {
+                <RequireAdminAuth>
+                  <AdminDashboardPage/>
+                </RequireAdminAuth>
 
-            }/>
-            <Route path='/admin/addUser' element={
-              <RequireAdminAuth>
-                <AdminAddPage/>
-              </RequireAdminAuth>
-               
+                }/>
+                <Route path='/admin/addUser' element={
+                  <RequireAdminAuth>
+                    <AdminAddPage/>
+                  </RequireAdminAuth>
+                  
 
-            }/>
-        </Routes>
-      </BrowserRouter>
+                }/>
+
+                <Route path='/dashboard' element={<Dashboard/>}/>
+            </Routes>
+          </BrowserRouter>
+        </PersistGate>
+          
       </Provider>
       
       

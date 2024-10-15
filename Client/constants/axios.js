@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
+  withCredentials:true,
   baseURL: "http://localhost:4545",
 });
 
@@ -15,11 +16,12 @@ const getToken = (role)=>{
 
 instance.interceptors.request.use(
   (config)=>{
+    console.log("connected with backeend")
     const role = config.role || 'user';
     const token = getToken(role);
-    console.log("check");
     
     if(token){
+      
       config.headers["authorization"] = `Bearer ${token}`;
     }
     return config;

@@ -38,17 +38,28 @@ const adminLogin = async(req,res)=>{
 }
 
 const getUserList = async(req,res)=>{
+    const adminToken = req.headers['authorization']?.split(" ")[1];
+    
+        
+        if(!adminToken){
+           
+            return res.status(401).json({message:"Token Missing"})
+        }
     try {
+        jwt.verify(adminToken,JWT_SECRET);
         const user = await User.find({isAdmin:{$ne:true}})
+        
         res.status(201).json({user})
     } catch (error) {
-        console.log(error);
+        return res.status(403).json({message:"umbada thayoli"})
         
     }
 }
 
 const getAdminDetails = async(req,res)=>{
+    
     const adminToken = req.headers['authorization']?.split(" ")[1];
+    console.log(adminToken);
         if(!adminToken){
             return res.status(401).json({message:"Token Missing"})
         }

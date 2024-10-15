@@ -1,3 +1,5 @@
+const createAccessToken = require('../utils/jwtToken')
+
 const User = require('../Models/user');
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -61,6 +63,8 @@ const loginUser = async(req,res)=>{
 }
 
 const getDetails = async(req,res)=>{
+    console.log('pari');
+    
     const token = req.headers["authorization"]?.split(" ")[1];
    
     if(!token){
@@ -70,6 +74,8 @@ const getDetails = async(req,res)=>{
     }
     try {
         const decoded = jwt.verify(token,JWT_SECRET);
+        console.log(decoded);
+        
         const user = await User.findById(decoded.id);
         if(user){
             return res.status(201).json({
@@ -118,7 +124,7 @@ const updateProfile = async(req,res)=>{
 
         await user.save();
 
-        return res.status(200).json({
+        return res.status(201).json({
             message:"Profile updated Successfully",
             userDetails:{
                 name:user.name,
@@ -134,4 +140,22 @@ const updateProfile = async(req,res)=>{
 
 }
 
-module.exports={registerUser, loginUser, getDetails, updateProfile}
+ const refresh = async(req,res)=>{
+    const refreshToken = req.cookies?.jwt;
+    console.log(req.cookies);
+    if(!refreshToken) return status(403).josn({message:"Unauthorised"});
+
+    const decoded = verifyToken(refreshToken,process.env.REFRESH_TOKEN);
+    const user = await User.findOne({email: decoded?.email});
+    if(!user) return res.status(401).json({message:"Unauthorized"})
+
+    const accessToken = createAccessToken(user);
+    res.status(200).json({
+        success:true,
+        message:"Access Token Created",
+        data:{user,accessToken}
+    })
+    
+}
+
+module.exports={registerUser, loginUser, getDetails, updateProfile, refresh}

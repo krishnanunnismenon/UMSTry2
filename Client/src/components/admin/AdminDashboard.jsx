@@ -17,9 +17,15 @@ function AdminDashboard() {
   const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
+    
     const fetchUserList = async () => {
+     
       try {
-        const response = await axios.get('/admin/getUserList');
+        console.log("This is user details");
+        
+        const response = await axios.get('/admin/getUserList',{
+          role:'admin'
+        });
         if (response.status === 201) {
           setUserList(response.data.user);
           setFilteredList(response.data.user);
@@ -28,25 +34,11 @@ function AdminDashboard() {
         console.log(error);
       }
     };
-    fetchUserList();
-
-    const fetchAdminDetails = async () => {
-      try {
-        const response = await axios.get('/admin/getAdminDetails', {
-          role: 'admin',
-        });
-        if (response.status === 201) {
-          dispatch(setAdmin(response.data.adminDetails));
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    if(!adminDetails){
-        fetchAdminDetails();
-    }
+   
+      fetchUserList();
     
-  }, [dispatch, adminDetails, navigate]);
+    
+  }, []);
 
   const handleLogout = () => {
     dispatch(clearAdmin());
@@ -113,7 +105,7 @@ function AdminDashboard() {
           user._id === selectedUser._id ? { ...user, name: trimmedName, email: trimmedEmail } : user
         ));
   
-        console.log("User updated successfully");
+        
       }
     } catch (error) {
       console.error("Error updating user: ", error);

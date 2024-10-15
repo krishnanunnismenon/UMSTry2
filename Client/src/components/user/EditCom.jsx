@@ -13,12 +13,20 @@ function EditCom() {
     const [image,setImage] = useState(null)
     const [imagePreview, setImagePreview] = useState('');
     const [update,setUpdate] = useState(false)
+    const [showMessage,setShowMessage] = useState(false)
+    const [emailValid,setEmailValid] = useState(true)
+    const [nameValid,setNameValid] = useState(true)
+
 
     useEffect(()=>{
+      console.log('rerendered');
+      
         const fetchUserDetails = async()=>{
             try {
                 const response = await axios.get('/getUserDetails');
                 if(response.status===201){
+                  console.log(response);
+                  
                     dispatch(setUser(response.data.userDetails))
                     
                 }else{
@@ -36,7 +44,15 @@ function EditCom() {
             setEmail(userDetails.email)
             setImagePreview(`http://localhost:4545${userDetails.image}`)
         }
-    },[userDetails,dispatch])
+
+        if(update){
+          setShowMessage(true);
+          const timer = setTimeout(()=>{
+            setShowMessage(false);
+          },1000)
+          return()=> clearTimeout(timer)
+        }
+    },[userDetails,update])
 
     const handleImageChange = (e)=>{
         const file = e.target.files[0];
@@ -46,8 +62,25 @@ function EditCom() {
         }
     }
 
+    const validateEmail = (email)=>{
+      const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      return pattern.test(email)
+    }
+
+    
+
     const handleSubmit = async(e)=>{
-        e.preventDefault();
+      e.preventDefault();
+        const isEmailValid = validateEmail(email);
+        const isNameValid = name.trim() !== "";
+
+        setEmailValid(isEmailValid)
+        setNameValid(isNameValid)
+
+        if(!isEmailValid || !isNameValid){
+          return
+        }
+
         const formData = new FormData();
         formData.append('name',name)
         formData.append('email',email)
@@ -59,7 +92,7 @@ function EditCom() {
             dispatch(setUser(response.data.userDetails));
             if(response){
                 setUpdate(true)
-                navigate('/home')
+               
             }else{
                 setUpdate(false)
                 alert('this user already exist')
@@ -72,11 +105,11 @@ function EditCom() {
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
-    <form
+    <form noValidate
       onSubmit={handleSubmit}
       className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full"
     >
-      {update ? (
+      {showMessage ? (
         <h3 className="text-green-500 text-xl font-semibold mb-4">
           Profile Updated
         </h3>
@@ -95,6 +128,9 @@ function EditCom() {
           required
           className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
+        {!nameValid && (
+            <span className="text-red-500 text-sm">Name cannot be empty</span>
+          )}
       </div>
   
       <div className="mb-4">
@@ -108,6 +144,9 @@ function EditCom() {
           required
           className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
+        {!emailValid && (
+            <span className="text-red-500 text-sm">Invalid email address</span>
+          )}
       </div>
   
       <div className="mb-6">

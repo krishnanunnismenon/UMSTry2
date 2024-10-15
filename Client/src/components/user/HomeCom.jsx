@@ -9,27 +9,8 @@ function HomeCom() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        const fetchUserDetails = async () => {
-            try {
-                const response = await axios.get('/getUserDetails', { role: "user" });
-                if (response.status === 201) {
-                    dispatch(setUser(response.data.userDetails));  // Dispatch the user details to store
-                } else {
-                    // Handle other status codes if necessary
-                }
-            } catch (error) {
-                console.log(error);
-                navigate('/login');  // Redirect to login on failure
-            }
-        };
-    
-        // Call the fetch function
-        fetchUserDetails();
-    
-    }, [dispatch, navigate]);
-    
 
+   
     const handleLogout = ()=>{
         dispatch(clearUser());
         navigate('/login')
@@ -66,6 +47,7 @@ function HomeCom() {
         Logout
       </button>
     </div>
+    
   </div>
 </div>
 
