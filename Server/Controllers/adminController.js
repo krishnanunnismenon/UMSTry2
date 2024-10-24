@@ -47,11 +47,12 @@ const getUserList = async(req,res)=>{
         }
     try {
         jwt.verify(adminToken,JWT_SECRET);
+       
         const user = await User.find({isAdmin:{$ne:true}})
         
         res.status(201).json({user})
     } catch (error) {
-        return res.status(403).json({message:"umbada thayoli"})
+        return res.status(403).json({message:"You are not authorized to enter"})
         
     }
 }
